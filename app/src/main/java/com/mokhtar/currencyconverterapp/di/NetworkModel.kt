@@ -2,6 +2,8 @@ package com.mokhtar.currencyconverterapp.di
 
 import com.mokhtar.currencyconverterapp.data.remote.CurrencyService
 import com.mokhtar.currencyconverterapp.data.remote.Ser2
+import com.mokhtar.currencyconverterapp.data.remote.repository.CurrencyResponseInterface
+import com.mokhtar.currencyconverterapp.data.remote.repository.CurrencyRepository
 import com.mokhtar.currencyconverterapp.util.*
 import dagger.Module
 import dagger.Provides
@@ -48,7 +50,6 @@ object NetworkModule {
     }
 
 
-
     @Singleton
     @Provides
     @Named("custom")
@@ -56,7 +57,7 @@ object NetworkModule {
         okHttpClient: OkHttpClient
     ): Retrofit {
         return Retrofit.Builder()
-            .addConverterFactory( GsonConverterFactory.create(GsonTypeHelper.create()))
+            .addConverterFactory(GsonConverterFactory.create(GsonTypeHelper.create()))
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .build()
@@ -69,7 +70,16 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideCustomApiService( @Named("custom") retrofit: Retrofit): Ser2 {
+    fun provideCustomApiService(@Named("custom") retrofit: Retrofit): Ser2 {
         return retrofit.create(Ser2::class.java)
     }
+
+
+    @Singleton
+    @Provides
+    fun bindInterface(repository: CurrencyRepository): CurrencyResponseInterface {
+        return repository
+    }
+
+
 }

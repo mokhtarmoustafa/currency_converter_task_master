@@ -4,31 +4,61 @@ import android.content.Context
 import com.mokhtar.currencyconverterapp.data.local.dao.CurrencyDao
 import com.mokhtar.currencyconverterapp.data.remote.CurrencyService
 import com.mokhtar.currencyconverterapp.data.remote.Ser2
+import com.mokhtar.currencyconverterapp.model.convert.ConvertData
 import com.mokhtar.currencyconverterapp.model.convert.ConvertResponse
-import com.mokhtar.currencyconverterapp.model.country.CountryResponse
+import com.mokhtar.currencyconverterapp.model.convert.ValueData
+import com.mokhtar.currencyconverterapp.model.currency.Currency
 import com.mokhtar.currencyconverterapp.model.currency.CurrencyResponse
-import com.mokhtar.currencyconverterapp.model.currency.Results
 import com.mokhtar.currencyconverterapp.util.*
+import dagger.Module
+import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ActivityRetainedScoped
-
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import retrofit2.Response
-import retrofit2.http.Query
 import javax.inject.Inject
 
-@ActivityRetainedScoped
-class CurrencyRepository @Inject constructor(
+
+class MockCurrencyRepo:CurrencyResponseInterface{
+
+    val currencyResponse = CurrencyResponse(mutableListOf(Currency("ABC","BBB","IDID")))
+
+    override fun getAllCurrencies(): Flow<State<CurrencyResponse>> {
+        return flow {
+            emit(State.success(currencyResponse))
+        }
+    }
+
+    override suspend fun getConvertData(
+        query: String,
+        compact: String,
+        date: String,
+        endDate: String?
+    ): Flow<State<ConvertResponse>> {
+
+       val y = ConvertResponse(mutableListOf(ConvertData("A","B","T", mutableListOf(ValueData(231313.0)),false)))
+        return flow{
+            emit(State.success(y))
+        }
+
+    }
+
+
+}
+
+@InstallIn(SingletonComponent::class)
+@Module
+class CurrencyRepository @Inject  constructor(
     @ApplicationContext private val context: Context,
     private val currencyDao: CurrencyDao,
     private val currencyService: CurrencyService,
     private val currencySer2: Ser2
-) {
+):CurrencyResponseInterface {
 
-    fun getAllCurrencies(): Flow<State<CurrencyResponse>> {
+    override fun getAllCurrencies(): Flow<State<CurrencyResponse>> {
 
         return object : NetworkBoundRepository<CurrencyResponse, CurrencyResponse>() {
 
@@ -44,7 +74,7 @@ class CurrencyRepository @Inject constructor(
     }
 
 
-    suspend fun getConvertData(
+    override suspend fun getConvertData(
         query: String,
         compact: String,
         date: String,
