@@ -1,7 +1,7 @@
 package com.mokhtar.currencyconverterapp.di
 
 import com.mokhtar.currencyconverterapp.data.remote.CurrencyService
-import com.mokhtar.currencyconverterapp.data.remote.Ser2
+//import com.mokhtar.currencyconverterapp.data.remote.Ser2
 import com.mokhtar.currencyconverterapp.data.remote.repository.CurrencyResponseInterface
 import com.mokhtar.currencyconverterapp.data.remote.repository.CurrencyRepository
 import com.mokhtar.currencyconverterapp.util.*
@@ -68,11 +68,11 @@ object NetworkModule {
         return retrofit.create(CurrencyService::class.java)
     }
 
-    @Singleton
-    @Provides
-    fun provideCustomApiService(@Named("custom") retrofit: Retrofit): Ser2 {
-        return retrofit.create(Ser2::class.java)
-    }
+//    @Singleton
+//    @Provides
+//    fun provideCustomApiService(@Named("custom") retrofit: Retrofit): Ser2 {
+//        return retrofit.create(Ser2::class.java)
+//    }
 
 
     @Singleton

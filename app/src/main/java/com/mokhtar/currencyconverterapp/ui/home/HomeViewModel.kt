@@ -59,7 +59,7 @@ class HomeViewModel @Inject constructor(private val currencyRepository: Currency
     {
         viewModelScope.launch {
 
-           currencyRepository.getConvertData(query,compact,date,endDate) .collectLatest {
+           currencyRepository.getConvertData(query,compact,date,endDate).collectLatest {
                _convertLiveData.value=it
            }
         }

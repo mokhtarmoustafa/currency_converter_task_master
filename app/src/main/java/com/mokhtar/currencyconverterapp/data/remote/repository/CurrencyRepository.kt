@@ -3,7 +3,6 @@ package com.mokhtar.currencyconverterapp.data.remote.repository
 import android.content.Context
 import com.mokhtar.currencyconverterapp.data.local.dao.CurrencyDao
 import com.mokhtar.currencyconverterapp.data.remote.CurrencyService
-import com.mokhtar.currencyconverterapp.data.remote.Ser2
 import com.mokhtar.currencyconverterapp.model.convert.ConvertData
 import com.mokhtar.currencyconverterapp.model.convert.ConvertResponse
 import com.mokhtar.currencyconverterapp.model.convert.ValueData
@@ -55,7 +54,6 @@ class CurrencyRepository @Inject  constructor(
     @ApplicationContext private val context: Context,
     private val currencyDao: CurrencyDao,
     private val currencyService: CurrencyService,
-    private val currencySer2: Ser2
 ):CurrencyResponseInterface {
 
     override fun getAllCurrencies(): Flow<State<CurrencyResponse>> {
@@ -80,7 +78,7 @@ class CurrencyRepository @Inject  constructor(
         date: String,
         endDate: String?
     ): Flow<State<ConvertResponse>> = flow {
-        val convertData = currencySer2.getConvertData(query, compact, date, endDate)
+        val convertData = currencyService.getConvertData(query, compact, date, endDate)
         if (convertData.isSuccessful && convertData.body() != null) {
             convertData.body().let {
                 emit(State.Success(it!!))

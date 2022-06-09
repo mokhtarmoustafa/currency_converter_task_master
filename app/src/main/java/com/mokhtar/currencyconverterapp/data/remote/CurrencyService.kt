@@ -17,11 +17,6 @@ interface CurrencyService {
     @GET(CURRENCIES_URL)
     suspend fun getCurrencies(): Response<CurrencyResponse>
 
-
-
-}
-interface Ser2 {
-
     @GET(CONVERT_URL)
     suspend fun getConvertData(
         @Query("q") query: String,
@@ -30,4 +25,18 @@ interface Ser2 {
         @Query("endDate") endDate: String?
     ): Response<ConvertResponse>
 
+
+
+
 }
+//interface Ser2 {
+//
+//    @GET(CONVERT_URL)
+//    suspend fun getConvertData(
+//        @Query("q") query: String,
+//        @Query("compact") compact: String,
+//        @Query("date") date: String,
+//        @Query("endDate") endDate: String?
+//    ): Response<ConvertResponse>
+//
+//}
