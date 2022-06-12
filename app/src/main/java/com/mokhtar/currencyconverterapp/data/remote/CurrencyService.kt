@@ -29,14 +29,15 @@ interface CurrencyService {
 
 
 }
-//interface Ser2 {
-//
-//    @GET(CONVERT_URL)
-//    suspend fun getConvertData(
-//        @Query("q") query: String,
-//        @Query("compact") compact: String,
-//        @Query("date") date: String,
-//        @Query("endDate") endDate: String?
-//    ): Response<ConvertResponse>
-//
-//}
+
+interface Ser2 {
+
+    @GET(CONVERT_URL)
+    suspend fun getConvertData(
+        @Query("q") query: String,
+        @Query("compact") compact: String,
+        @Query("date") date: String,
+        @Query("endDate") endDate: String?
+    ): Response<ConvertResponse>
+
+}

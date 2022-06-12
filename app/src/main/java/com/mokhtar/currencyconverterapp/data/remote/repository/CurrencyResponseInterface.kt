@@ -18,4 +18,7 @@ interface CurrencyResponseInterface{
         endDate: String?
     ): Flow<State<ConvertResponse>>
 
+
+
+
 }

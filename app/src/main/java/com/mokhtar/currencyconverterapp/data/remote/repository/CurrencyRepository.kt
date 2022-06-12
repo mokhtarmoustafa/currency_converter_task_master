@@ -1,8 +1,8 @@
 package com.mokhtar.currencyconverterapp.data.remote.repository
 
-import android.content.Context
 import com.mokhtar.currencyconverterapp.data.local.dao.CurrencyDao
 import com.mokhtar.currencyconverterapp.data.remote.CurrencyService
+import com.mokhtar.currencyconverterapp.data.remote.Ser2
 import com.mokhtar.currencyconverterapp.model.convert.ConvertData
 import com.mokhtar.currencyconverterapp.model.convert.ConvertResponse
 import com.mokhtar.currencyconverterapp.model.convert.ValueData
@@ -11,7 +11,6 @@ import com.mokhtar.currencyconverterapp.model.currency.CurrencyResponse
 import com.mokhtar.currencyconverterapp.util.*
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -51,9 +50,9 @@ class MockCurrencyRepo:CurrencyResponseInterface{
 @InstallIn(SingletonComponent::class)
 @Module
 class CurrencyRepository @Inject  constructor(
-    @ApplicationContext private val context: Context,
     private val currencyDao: CurrencyDao,
     private val currencyService: CurrencyService,
+    private val ser2: Ser2,
 ):CurrencyResponseInterface {
 
     override fun getAllCurrencies(): Flow<State<CurrencyResponse>> {
@@ -71,18 +70,19 @@ class CurrencyRepository @Inject  constructor(
         }.asFlow().flowOn(Dispatchers.IO)
     }
 
-
     override suspend fun getConvertData(
         query: String,
         compact: String,
         date: String,
         endDate: String?
     ): Flow<State<ConvertResponse>> = flow {
-        val convertData = currencyService.getConvertData(query, compact, date, endDate)
+        val convertData = ser2.getConvertData(query, compact, date, endDate)
         if (convertData.isSuccessful && convertData.body() != null) {
             convertData.body().let {
                 emit(State.Success(it!!))
             }
         }
     }.flowOn(Dispatchers.IO)
+
+
 }
