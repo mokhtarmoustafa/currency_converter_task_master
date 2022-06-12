@@ -17,16 +17,6 @@ import javax.inject.Inject
 
 
 
-interface HomeViewModelInterface{
-    val currencyLiveData: LiveData<State<CurrencyResponse>>
-    val convertLiveData: LiveData<State<ConvertResponse>>
-
-    fun getCurrencies()
-    fun getConvertData( query: String,
-                        compact: String,
-                        date: String,
-                        endDate: String?)
-    }
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val currencyRepository: CurrencyResponseInterface) :HomeViewModelInterface,
