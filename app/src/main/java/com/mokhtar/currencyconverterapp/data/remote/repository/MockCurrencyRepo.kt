@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.flow
 class MockCurrencyRepo:CurrencyResponseInterface{
 
     val currencyResponse = CurrencyResponse(mutableListOf(Currency("ABC","BBB","IDID")))
+   val convertResponse= ConvertResponse(mutableListOf(ConvertData("A","B","T", mutableListOf(ValueData(231313.0)),false)))
 
     override fun getAllCurrencies(): Flow<State<CurrencyResponse>> {
         return flow {
@@ -26,9 +27,9 @@ class MockCurrencyRepo:CurrencyResponseInterface{
         endDate: String?
     ): Flow<State<ConvertResponse>> {
 
-        val y = ConvertResponse(mutableListOf(ConvertData("A","B","T", mutableListOf(ValueData(231313.0)),false)))
+//        val y = ConvertResponse(mutableListOf(ConvertData("A","B","T", mutableListOf(ValueData(231313.0)),false)))
         return flow{
-            emit(State.success(y))
+            emit(State.success(convertResponse))
         }
 
     }

@@ -4,6 +4,7 @@ package com.mokhtar.currencyconverterapp.ui.home
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.mokhtar.currencyconverterapp.data.remote.repository.MockCurrencyRepo
+import com.mokhtar.currencyconverterapp.model.convert.ConvertResponse
 import com.mokhtar.currencyconverterapp.model.currency.CurrencyResponse
 import com.mokhtar.currencyconverterapp.util.State
 import kotlinx.coroutines.CoroutineScope
@@ -74,6 +75,34 @@ class HomeViewModelTest {
         val r = repo.currencyResponse
         assertNotNull("Null currency response", currencyResponse)
         assertEquals("Currency response from VM not equal to repo", currencyResponse, r)
+    }
+
+
+    @Test
+    fun getConvertLiveData() {
+        val latch = CountDownLatch(1)
+        var convertResponse: ConvertResponse? = null
+        val observer = object : Observer<State<ConvertResponse>> {
+            override fun onChanged(receivedPlants: State<ConvertResponse>?) {
+                val s = vm.convertLiveData.value
+                when (s) {
+                    is State.Success -> {
+                        convertResponse = s.data
+                    }
+                    is State.Error -> {
+                        fail("Couldn't get convert currency response")
+                    }
+                }
+                latch.countDown()
+                vm.convertLiveData.removeObserver(this)
+            }
+        }
+        vm.convertLiveData.observeForever(observer)
+        vm.getCurrencies()
+        latch.await(10, TimeUnit.SECONDS)
+        val r = repo.convertResponse
+        assertNotNull("Null currency response", convertResponse)
+        assertEquals("Currency response from VM not equal to repo", convertResponse, r)
     }
 
 

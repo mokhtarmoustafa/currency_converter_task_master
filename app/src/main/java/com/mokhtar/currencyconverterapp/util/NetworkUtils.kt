@@ -6,6 +6,7 @@ import android.net.Network
 import android.net.NetworkInfo
 import android.net.NetworkRequest
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
@@ -19,7 +20,7 @@ object NetworkUtils {
     /**
      * Returns instance of [LiveData] which can be observed for network changes.
      */
-    fun getNetworkLiveData(context: Context): LiveData<Boolean> {
+    fun getNetworkLiveData(context: Context,manager:ConnMan): LiveData<Boolean> {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -35,17 +36,67 @@ object NetworkUtils {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            connectivityManager.registerDefaultNetworkCallback(networkCallback)
+            manager.registerDefaultNetworkCallback(networkCallback)
+
         } else {
             val builder = NetworkRequest.Builder()
-            connectivityManager.registerNetworkCallback(builder.build(), networkCallback)
+            manager.registerNetworkCallback(builder.build(), networkCallback)
         }
 
-        val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
+        val activeNetwork: NetworkInfo? = manager.activeNetworkInfo
         val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting == true
 
         networkLiveData.postValue(isConnected)
 
         return networkLiveData
+    }
+}
+
+interface ConnMan {
+    fun registerDefaultNetworkCallback(networkCallback: ConnectivityManager.NetworkCallback)
+    fun registerNetworkCallback(request: NetworkRequest ,  networkCallback: ConnectivityManager.NetworkCallback)
+    val activeNetworkInfo:NetworkInfo?
+}
+
+
+
+class FakeConManager(context: Context):ConnMan{
+    override val activeNetworkInfo: NetworkInfo?
+        get() = null
+
+
+    var isRegNetworkCalled = false
+
+    override fun registerNetworkCallback(
+        request: NetworkRequest,
+        networkCallback: ConnectivityManager.NetworkCallback
+    ) {
+        isRegistedCalled = true
+    }
+
+    var isRegistedCalled = false
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun registerDefaultNetworkCallback(networkCallback: ConnectivityManager.NetworkCallback) {
+        isRegistedCalled = true
+    }
+}
+
+class ConManagerReal(context: Context):ConnMan{
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    override val activeNetworkInfo: NetworkInfo?
+        get() = connectivityManager.activeNetworkInfo
+
+    override fun registerNetworkCallback(
+        request: NetworkRequest,
+        networkCallback: ConnectivityManager.NetworkCallback
+    ) {
+        connectivityManager.registerNetworkCallback(request,networkCallback)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun registerDefaultNetworkCallback(networkCallback: ConnectivityManager.NetworkCallback) {
+        connectivityManager.registerDefaultNetworkCallback(networkCallback)
     }
 }
