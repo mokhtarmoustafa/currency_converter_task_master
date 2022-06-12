@@ -20,32 +20,7 @@ import retrofit2.Response
 import javax.inject.Inject
 
 
-class MockCurrencyRepo:CurrencyResponseInterface{
 
-    val currencyResponse = CurrencyResponse(mutableListOf(Currency("ABC","BBB","IDID")))
-
-    override fun getAllCurrencies(): Flow<State<CurrencyResponse>> {
-        return flow {
-            emit(State.success(currencyResponse))
-        }
-    }
-
-    override suspend fun getConvertData(
-        query: String,
-        compact: String,
-        date: String,
-        endDate: String?
-    ): Flow<State<ConvertResponse>> {
-
-       val y = ConvertResponse(mutableListOf(ConvertData("A","B","T", mutableListOf(ValueData(231313.0)),false)))
-        return flow{
-            emit(State.success(y))
-        }
-
-    }
-
-
-}
 
 @InstallIn(SingletonComponent::class)
 @Module
