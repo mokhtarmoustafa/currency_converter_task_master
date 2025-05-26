@@ -20,7 +20,7 @@ object NetworkUtils {
     /**
      * Returns instance of [LiveData] which can be observed for network changes.
      */
-    fun getNetworkLiveData(context: Context,manager:ConnMan): LiveData<Boolean> {
+    fun getNetworkLiveData(context: Context, manager: ConnMan): LiveData<Boolean> {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -37,7 +37,6 @@ object NetworkUtils {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             manager.registerDefaultNetworkCallback(networkCallback)
-
         } else {
             val builder = NetworkRequest.Builder()
             manager.registerNetworkCallback(builder.build(), networkCallback)
@@ -54,18 +53,21 @@ object NetworkUtils {
 
 interface ConnMan {
     fun registerDefaultNetworkCallback(networkCallback: ConnectivityManager.NetworkCallback)
-    fun registerNetworkCallback(request: NetworkRequest ,  networkCallback: ConnectivityManager.NetworkCallback)
-    val activeNetworkInfo:NetworkInfo?
+    fun registerNetworkCallback(
+        request: NetworkRequest,
+        networkCallback: ConnectivityManager.NetworkCallback
+    )
+
+    val activeNetworkInfo: NetworkInfo?
 }
 
 
-
-class FakeConManager(context: Context):ConnMan{
+class FakeConManager(context: Context) : ConnMan {
     override val activeNetworkInfo: NetworkInfo?
         get() = null
 
 
-    var isRegNetworkCalled = false
+    var isRegistedCalled = false
 
     override fun registerNetworkCallback(
         request: NetworkRequest,
@@ -74,14 +76,14 @@ class FakeConManager(context: Context):ConnMan{
         isRegistedCalled = true
     }
 
-    var isRegistedCalled = false
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun registerDefaultNetworkCallback(networkCallback: ConnectivityManager.NetworkCallback) {
         isRegistedCalled = true
     }
 }
 
-class ConManagerReal(context: Context):ConnMan{
+class ConManagerReal(context: Context) : ConnMan {
     val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -92,7 +94,7 @@ class ConManagerReal(context: Context):ConnMan{
         request: NetworkRequest,
         networkCallback: ConnectivityManager.NetworkCallback
     ) {
-        connectivityManager.registerNetworkCallback(request,networkCallback)
+        connectivityManager.registerNetworkCallback(request, networkCallback)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
