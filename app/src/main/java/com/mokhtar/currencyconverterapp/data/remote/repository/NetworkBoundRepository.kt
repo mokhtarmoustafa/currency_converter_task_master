@@ -9,7 +9,6 @@ import retrofit2.Response
 
 
 abstract class NetworkBoundRepository<RESULT, REQUEST> {
- var type=ResponseType.CURRENCY
     fun asFlow() = flow {
 
         // Emit Loading State
